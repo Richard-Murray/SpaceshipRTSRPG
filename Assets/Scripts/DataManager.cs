@@ -34,6 +34,10 @@ public class DataManager : MonoBehaviour {
         {
             m_prefabLoadedDictionary.Add(gObject.GetComponent<BaseHardpoint>().m_id, gObject);
         }
+        foreach (GameObject gObject in Resources.LoadAll("Prefabs/Hulls", typeof(GameObject)))
+        {
+            m_prefabLoadedDictionary.Add(gObject.GetComponent<BaseShip>().m_id, gObject);
+        }
     }
 	
 	// Update is called once per frame

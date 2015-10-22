@@ -35,6 +35,9 @@ public enum IFFGROUP
 
 public class BaseShip : MonoBehaviour {
 
+    public string m_id;
+
+    [Header("Base Ship Attributes")]
     //Statistics that will be used for all ship prefabs
     public float m_baseCapacityStructure; //In KG
     public float m_baseCapacityPowerGrid;
@@ -70,13 +73,13 @@ public class BaseShip : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         List<string> hardpoints = new List<string>();
-        hardpoints.Add("basicEngine");
-        hardpoints.Add("basicShield");
-        hardpoints.Add("basicTurretCannon");
-        hardpoints.Add("basicTurretCannon");
-        hardpoints.Add("basicTurretCannon2");
+        //hardpoints.Add("basicEngine");
+        //hardpoints.Add("basicShield");
+        //hardpoints.Add("basicTurretCannon");
+        //hardpoints.Add("basicTurretCannon");
+        //hardpoints.Add("basicTurretCannon2");
 
-        Initialise(hardpoints);
+        //Initialise(hardpoints);
         //m_hardpointList = new List<FixedHardpoint>();
 	}
 	
@@ -89,21 +92,18 @@ public class BaseShip : MonoBehaviour {
             {
                 m_hardpointList[i].m_hardpoint.ShipUpdate();
             }
-            //m_hardpointList[i].m_hardpoint.PrimaryAction();
         }
 
         if(Input.GetKeyDown(KeyCode.A))
         {
             ApplyDamage(new DamageInformation(100, 0, 0, 0, IFFGROUP.TEAM1));
         }
-        //Debug.Log(m_activeShield.m_shieldCurrentHitPoints);
-        //Debug.Log(m_currentHitPoints);
 
         
         ApplyMovement();
     }
 
-    void Initialise(List<string> a_hardpointsToLoad)
+    public void Initialise(List<string> a_hardpointsToLoad)
     {
         m_maxHitPoints = m_baseMaxHitPoints;
         m_maxPower = m_baseMaxPower;
@@ -217,7 +217,7 @@ public class BaseShip : MonoBehaviour {
 
     void ApplyMovement() //This will handle bringing speeds up to 
     {
-
+        
     }
 
     //void AddBaseHardpoint(Vector3 a_hullLocation, MOUNTTYPE a_mountType, MOUNTSIZE a_mountSize, Vector3 a_initialRotation) //Currently unneeded

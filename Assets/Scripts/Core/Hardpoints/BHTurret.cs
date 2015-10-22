@@ -21,6 +21,7 @@ public class BHTurret : BaseHardpoint
     public void Start()
     {
         m_currentDirection = transform.up;
+        m_targetDirection = new Vector3(0, 1, 0);
     }
 
     // Update is called once per frame
@@ -35,69 +36,28 @@ public class BHTurret : BaseHardpoint
 
     public void FinishRotation()
     {
-        transform.up = m_currentDirection;
+        //transform.up = m_currentDirection;
     }
 
     public virtual void RotateToTarget()
-    {
-        Debug.Log(transform.rotation.z);
-
-        //Quaternion.RotateTowards(
-
-
-
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, step)
-        //step is max delta in degrees
-
-        //Eulervec, (0, 90, 0)
-        //Degrees float, 90
-        //Dir vec, (0, 1, 0)
-        //Quaternion, (something)
-
-        //float degrees to quat, Quaternion.Euler
-        //Dirvec to quat, Quaternion.LookRotation
-        //Euler to quat, Quaternion.Euler
-        //float degrees to dirvec (lookvector),
-        //Quaternion to degrees, eulerangles
-
-        //Vector3 eulerVec = (0 90 0)
-        //Quaternion rot = Quaternion.Euler(eulerVec)
-
-
-
-
+    {                
         m_targetDirection = (m_locationTarget - transform.position).normalized;
         m_targetDirection.z = 0;
 
-        //m_currentDirection = Quaternion.RotateTowards(Quaternion.LookRotation(m_currentDirection, Vector3.up), Quaternion.LookRotation(m_targetDirection, Vector3.up), m_turnSpeede) * transform.up;
+        var qTargetDirection = Quaternion.FromToRotation(Vector3.up, m_targetDirection);
+        float fNewAngle = Mathf.MoveTowardsAngle(transform.localRotation.eulerAngles.z, qTargetDirection.eulerAngles.z, m_turnSpeed * Time.deltaTime);
 
-        float fDirMod = 1.0f;
-        float fPerpDot = Vector3.Dot(transform.right, m_targetDirection); //this right only works on up, forward likely needs up
-        if (fPerpDot > 0) fDirMod = -1.0f;
-
-        Quaternion rotation = Quaternion.AngleAxis(fDirMod * m_turnSpeed * Time.deltaTime, Vector3.forward);
-        Vector3 vecFinalDirection = rotation * transform.up;
-
-        Quaternion targetDirection = Quaternion.LookRotation(m_targetDirection);
-        Quaternion currentDirection = Quaternion.LookRotation(transform.up);
-        Quaternion finalDirection = Quaternion.LookRotation(vecFinalDirection);
-
-        //Debug.Log(fPerpDot);
-        float fCurrentAngle = Quaternion.Angle(currentDirection, targetDirection);
-        float fNewAngle = Quaternion.Angle(finalDirection, targetDirection);
-
-        if(fCurrentAngle < fNewAngle) // && Quaternion.Angle(currentDirection, transform.rotation.) 
-        {
-            m_currentDirection = m_targetDirection;
-        }
-        else
-        {
-            m_currentDirection = vecFinalDirection;
-        }
+        transform.localRotation = Quaternion.Euler(0, 0, fNewAngle);
     }
 
     public virtual void RotateToTargetHeader()
     {
         m_targetDirection = (m_headingTarget - transform.position).normalized;
+        m_targetDirection.z = 0;
+
+        var qTargetDirection = Quaternion.FromToRotation(Vector3.up, m_targetDirection);
+        float fNewAngle = Mathf.MoveTowardsAngle(transform.localRotation.eulerAngles.z, qTargetDirection.eulerAngles.z, m_turnSpeed * Time.deltaTime);
+
+        transform.localRotation = Quaternion.Euler(0, 0, fNewAngle);
     }
 }

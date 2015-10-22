@@ -55,10 +55,6 @@ public class TurretCannon : BHTurret
         m_projectileOffsetIndex = 0;
         m_activated = false;
 
-        //take a look at these
-        m_targetDirection = new Vector3(0, 1, 0);
-        m_currentDirection = new Vector3(0, 1, 0);
-
         //debug
         m_objectToTarget = GameObject.Find("DebugTarget");
         m_locationTarget = m_objectToTarget.transform.position;

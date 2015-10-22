@@ -25,10 +25,11 @@ public class BPCannon : BaseProjectile {
         }
 	}
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D collider)
     {
         //Debug.Log("Collision");
-        BaseShip ship = collision.collider.GetComponent<BaseShip>();
+        //Debug.Log(collision.gameObject);
+        BaseShip ship = collider.GetComponent<BaseShip>();
         if (ship.gameObject != m_originObject)
         {
             if (ship != null)
