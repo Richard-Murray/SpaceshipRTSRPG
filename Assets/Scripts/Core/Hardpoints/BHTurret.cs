@@ -31,7 +31,7 @@ public class BHTurret : BaseHardpoint
 
     public override void ShipUpdate()
     {
-        m_locationTarget = m_objectToTarget.transform.position; //DEBUG
+
     }
 
     public void FinishRotation()
@@ -45,14 +45,25 @@ public class BHTurret : BaseHardpoint
         m_targetDirection.z = 0;
 
         var qTargetDirection = Quaternion.FromToRotation(Vector3.up, m_targetDirection);
-        float fNewAngle = Mathf.MoveTowardsAngle(transform.localRotation.eulerAngles.z, qTargetDirection.eulerAngles.z, m_turnSpeed * Time.deltaTime);
+        float fNewAngle = Mathf.MoveTowardsAngle(transform.rotation.eulerAngles.z, qTargetDirection.eulerAngles.z, m_turnSpeed * Time.deltaTime);
 
-        transform.localRotation = Quaternion.Euler(0, 0, fNewAngle);
+        transform.rotation = Quaternion.Euler(0, 0, fNewAngle);
     }
 
     public virtual void RotateToTargetHeader()
     {
         m_targetDirection = (m_headingTarget - transform.position).normalized;
+        m_targetDirection.z = 0;
+
+        var qTargetDirection = Quaternion.FromToRotation(Vector3.up, m_targetDirection);
+        float fNewAngle = Mathf.MoveTowardsAngle(transform.localRotation.eulerAngles.z, qTargetDirection.eulerAngles.z, m_turnSpeed * Time.deltaTime);
+
+        transform.localRotation = Quaternion.Euler(0, 0, fNewAngle);
+    }
+
+    public virtual void RotateToVectorTarget(Vector3 a_target)
+    {
+        m_targetDirection = (a_target - transform.position).normalized;
         m_targetDirection.z = 0;
 
         var qTargetDirection = Quaternion.FromToRotation(Vector3.up, m_targetDirection);

@@ -13,13 +13,26 @@ public class BHEngine : BaseHardpoint {
     public float m_boostSteerAgilityMod;
     public float m_boostPowerDrain;
 
+    //[HideInInspector]
+    //public bool m_boosting;
+
 	// Use this for initialization
 	void Start () {
-	
+        base.Start();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+    //public override void ShipUpdate()
+    //{
+    //    m_boosting = false;
+    //}
+
+    //public override void PrimaryAction()
+    //{
+    //    m_boosting = true;
+    //}
 }

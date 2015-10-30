@@ -45,7 +45,7 @@ public class BPCannon : BaseProjectile {
 
     }
 
-    public void Initialise(DamageInformation a_damageInformation, IFFGROUP a_team, GameObject a_originObject, float a_projectileSpeed, Vector3 a_direction, float a_lifeTime = 10)
+    public void Initialise(DamageInformation a_damageInformation, IFFGROUP a_team, GameObject a_originObject, float a_projectileSpeed, Vector3 a_direction, float a_lifeTime = 100)
     {
         m_damageInformation = a_damageInformation;
         m_team = a_team;

@@ -6,6 +6,8 @@ public class ObjectFactory : MonoBehaviour {
 
     public static ObjectFactory Instance { get; private set; }
 
+    int m_numOfShipsDebug = 0;
+
     void Awake()
     {        
         if(!Instance)
@@ -39,13 +41,36 @@ public class ObjectFactory : MonoBehaviour {
         ShipBuild tempBuild = new ShipBuild(hull, hardpoints, controlGroups, cost);
 
         CreateShip(tempBuild, IFFGROUP.TEAM1, new Vector3(-5, 0, 0));
-        CreateShip(tempBuild, IFFGROUP.TEAM1, new Vector3(5, 0, 0));
+        CreateShip(tempBuild, IFFGROUP.TEAM2, new Vector3(5, 0, 0));
 	}
 	
 	// Update is called once per frame
     void Update()
     {
+        //Debug.Log(m_numOfShipsDebug);
 
+        //if(Input.GetKey(KeyCode.Space))
+        //{
+        //    string hull = "basicShip";
+        //    List<string> hardpoints = new List<string>();
+        //    hardpoints.Add("basicEngine");
+        //    hardpoints.Add("basicShield");
+        //    hardpoints.Add("basicTurretCannon");
+        //    hardpoints.Add("basicTurretCannon");
+        //    hardpoints.Add("basicTurretCannon2");
+        //    List<int> controlGroups = new List<int>();
+        //    controlGroups.Add(0);
+        //    controlGroups.Add(0);
+        //    controlGroups.Add(0);
+        //    controlGroups.Add(0);
+        //    controlGroups.Add(0);
+        //    float cost = 100.0f;
+        //    ShipBuild tempBuild = new ShipBuild(hull, hardpoints, controlGroups, cost);
+
+        //    CreateShip(tempBuild, IFFGROUP.TEAM1, new Vector3(Random.value * 100, 0, 0));
+
+        //    m_numOfShipsDebug++;
+        //}
     }
 
     void CreateShip(ShipBuild a_build, IFFGROUP a_team, Vector3 a_position)
@@ -54,6 +79,10 @@ public class ObjectFactory : MonoBehaviour {
         BaseShip shipScript = ship.GetComponent<BaseShip>();
         shipScript.Initialise(a_build.m_hardpoints);
         ship.transform.position = a_position;
+        ship.GetComponent<ShipController>().SetIFF(a_team);
+
+        //add ship to lists
+        ObjectManager.Instance.AddShip(shipScript);
     }
 }
 

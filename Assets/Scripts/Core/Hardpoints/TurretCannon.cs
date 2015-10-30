@@ -71,6 +71,12 @@ public class TurretCannon : BHTurret
     {
         base.ShipUpdate(); //One base should refer to BHturret
 
+        //test range of target
+        //if not given a control group target
+        m_objectToTarget = ObjectManager.Instance.GetTargetWithinRange(transform.position, m_parent.GetIFF(), m_maxRange); //IMPORTANT
+        //or if control group target still alive
+        //test for that
+
         if (m_objectToTarget != null)
         {
             m_headingTarget = m_objectToTarget.transform.position + (m_objectToTarget.transform.position - m_locationTarget) * 10;
@@ -78,10 +84,15 @@ public class TurretCannon : BHTurret
 
             RotateToTarget();
         }
+        else
+        {
+            RotateToVectorTarget(transform.position + new Vector3(0, 1, 0));
+        }
 
         FinishRotation();
 
-        PrimaryAction(); //debug
+        if(m_objectToTarget != null)
+            PrimaryAction(); //debug
 
         if(m_activated)
         {

@@ -32,6 +32,7 @@ public enum IFFGROUP
 }
 
 [RequireComponent(typeof(PolygonCollider2D))]
+[RequireComponent(typeof(ShipController))]
 
 public class BaseShip : MonoBehaviour {
 
@@ -45,6 +46,7 @@ public class BaseShip : MonoBehaviour {
     public float m_baseMaxPower;
     public float m_baseMaxHitPoints;
     public float m_basePowerRegenerationRate;
+    public float m_signatureRadius;
 
     public float m_physicalResistance;
     public float m_energyResistance;
@@ -53,9 +55,14 @@ public class BaseShip : MonoBehaviour {
     Collider2D m_collider;
 
     //Actively used variables
-    Vector2 m_velocity; //The actual velocity applied to the transform at the end of the frame
-    Vector2 m_throttleTarget; //x is the turn degree, y is the speed
-    Vector2 m_throttleVelocity; //Same as the target, but to be applied to the velocity after
+    Vector3 m_velocity; //The actual velocity applied to the transform at the end of the frame
+
+    float m_throttleRateSpeed; //from -1 to 1
+    float m_throttleRateYaw; //from -1 to 1
+    float m_throttleTargetSpeed; //the actual speed target
+    float m_currentSpeed; //the current speed, which is continually adjusted to reach targetspeed
+    float m_throttleTargetYaw; //probably the same as current yaw
+    float m_currentYaw; //unused
 
     float m_maxHitPoints; //These are different to the hull's HP because extenders may increase max values
     float m_currentHitPoints;
@@ -63,29 +70,26 @@ public class BaseShip : MonoBehaviour {
     float m_currentPower;
     float m_powerRegenerationRate;
     bool m_shieldAlive;
+    bool m_boosting;
+    bool m_powerDisabled;
     BHEngine m_activeEngine;
     UtilityShieldGenerator m_activeShield;
     IFFGROUP m_team;
 
     public List<FixedHardpoint> m_hardpointList;
-    //List<BaseHardpoint> m_hardpointList;
 
 	// Use this for initialization
 	void Start () {
-        List<string> hardpoints = new List<string>();
-        //hardpoints.Add("basicEngine");
-        //hardpoints.Add("basicShield");
-        //hardpoints.Add("basicTurretCannon");
-        //hardpoints.Add("basicTurretCannon");
-        //hardpoints.Add("basicTurretCannon2");
 
-        //Initialise(hardpoints);
-        //m_hardpointList = new List<FixedHardpoint>();
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+        //Debug.Log(m_currentHitPoints);
+        //Debug.Log(m_currentPower);
+        Debug.Log(GetIFF());
+
         for (int i = 0; i < m_hardpointList.Count; ++i)
         {
             if (m_hardpointList[i].m_hardpoint != null)
@@ -93,14 +97,14 @@ public class BaseShip : MonoBehaviour {
                 m_hardpointList[i].m_hardpoint.ShipUpdate();
             }
         }
-
-        if(Input.GetKeyDown(KeyCode.A))
-        {
-            ApplyDamage(new DamageInformation(100, 0, 0, 0, IFFGROUP.TEAM1));
-        }
-
-        
+        //if(Input.GetKeyDown(KeyCode.A))
+        //{
+        //    ApplyDamage(new DamageInformation(100, 0, 0, 0, IFFGROUP.TEAM1));
+        //}
+                
         ApplyMovement();
+
+        ApplyPower(m_powerRegenerationRate);
     }
 
     public void Initialise(List<string> a_hardpointsToLoad)
@@ -110,11 +114,23 @@ public class BaseShip : MonoBehaviour {
         m_powerRegenerationRate = m_basePowerRegenerationRate;
 
         m_shieldAlive = false;
+        m_boosting = false;
+        m_powerDisabled = false;
 
         for(int i = 0; i < a_hardpointsToLoad.Count; i++)
         {
             CreateHardpoint(a_hardpointsToLoad[i], i); //Need to know, do these immediately call start
         }
+
+        m_collider = GetComponent<PolygonCollider2D>();
+        m_velocity = new Vector3(0, 0, 0);
+
+        m_throttleRateSpeed = 0.0f;
+        m_throttleRateYaw = 0.0f;
+        m_throttleTargetSpeed = 0.0f;
+        m_currentSpeed = 0.0f;
+        m_throttleTargetYaw = 0.0f;
+        m_currentYaw = 0.0f;
 
         //Linking process, changes stats to reflect extenders
         LinkAndUpdateHardpoints();
@@ -205,18 +221,90 @@ public class BaseShip : MonoBehaviour {
         m_currentHitPoints -= damageInfo.m_physicalDamageMagnitude * damageReduction;
     }
 
-    public void ThrottleTurn(float a_turn)
+    public void ApplyPower(float a_power)
     {
-
+        m_currentPower = Mathf.Clamp(m_currentPower + a_power * Time.deltaTime, -999999, m_maxPower);
+        if(m_currentPower < 0)
+        {
+            m_powerDisabled = true;
+        }
+        else
+        {
+            m_powerDisabled = false;
+        }
     }
 
-    public void ThrottleSpeed(float a_speed)
-    {
 
+    //Inputs
+    public void ChangeThrottleYaw(float a_yaw)
+    {
+        m_throttleRateYaw += a_yaw;
+        m_throttleRateYaw = Mathf.Clamp(m_throttleRateYaw, -1, 1);
     }
+
+    public void ChangeThrottleSpeed(float a_speed)
+    {
+        m_throttleRateSpeed += a_speed;
+        m_throttleRateSpeed = Mathf.Clamp(m_throttleRateSpeed, -1, 1);
+    }
+
+    public void SetThrottleYaw(float a_yaw)
+    {
+        m_throttleRateYaw = a_yaw;
+    }
+
+    public void SetThrottleSpeed(float a_speed)
+    {
+        m_throttleRateSpeed = a_speed;
+    }
+
+    public void SetBoostOn()
+    {
+        if (!m_powerDisabled)
+        {
+            m_boosting = true;
+            ApplyPower(-m_activeEngine.m_boostPowerDrain);
+        }
+    }
+
+    public void SetBoostOff()
+    {
+        m_boosting = false;
+    }
+
+
 
     void ApplyMovement() //This will handle bringing speeds up to 
     {
+        float boostMod;
+        if(m_boosting == true)
+        {
+            boostMod = 1;
+        }
+        else
+        {
+            boostMod = 0;
+        }
+
+        m_throttleTargetSpeed = (m_activeEngine.m_maxSpeed + m_activeEngine.m_boostMaxSpeedMod * boostMod) * m_throttleRateSpeed;
+        m_throttleTargetYaw = (m_activeEngine.m_steerAgility + m_activeEngine.m_boostSteerAgilityMod * boostMod) * m_throttleRateYaw;
+
+        if(m_currentSpeed < m_throttleTargetSpeed)
+        {
+            m_currentSpeed = Mathf.Clamp(m_currentSpeed + ((m_activeEngine.m_acceleration + m_activeEngine.m_boostAccelerationMod * boostMod) * Time.deltaTime), -m_activeEngine.m_maxSpeed, m_throttleTargetSpeed);
+        }
+        else if(m_currentSpeed > m_throttleTargetSpeed)
+        {
+            m_currentSpeed = Mathf.Clamp(m_currentSpeed - ((m_activeEngine.m_acceleration + m_activeEngine.m_boostAccelerationMod * boostMod) * Time.deltaTime), m_throttleTargetSpeed, m_activeEngine.m_maxSpeed);
+        }
+
+        transform.rotation = Quaternion.Euler(0, 0, transform.localRotation.eulerAngles.z + m_throttleTargetYaw * Time.deltaTime); //PROBLEM, TURRETS DO NOT NOTICE
+        m_velocity = transform.up * m_currentSpeed; //not the 'real' velocity
+        //GetComponent<Rigidbody2D>().AddForce(new Vector2(m_velocity.x, m_velocity.y));
+        //Debug.Log(GetComponent<Rigidbody2D>().inertia);
+        transform.position += m_velocity * Time.deltaTime;
+
+        
         
     }
 
@@ -241,6 +329,11 @@ public class BaseShip : MonoBehaviour {
     public IFFGROUP GetIFF()
     {
         return m_team;
+    }
+
+    public void SetIFF(IFFGROUP a_team)
+    {
+        m_team = a_team;
     }
 }
 
@@ -284,7 +377,7 @@ public class FixedHardpoint
 
 
 
-public struct DamageInformation
+public class DamageInformation
 {
     public float m_physicalDamageMagnitude; //Damage in HP
     public float m_energyDamageMagnitude;
