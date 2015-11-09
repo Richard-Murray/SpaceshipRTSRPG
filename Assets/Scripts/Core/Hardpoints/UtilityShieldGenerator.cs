@@ -12,8 +12,10 @@ public class UtilityShieldGenerator : BHUtility {
     public float m_physicalResistance;
     public float m_energyResistance;
 
-    float m_shieldMaxHitPoints;
-    float m_shieldCurrentHitPoints; //debug
+    [HideInInspector]
+    public float m_shieldMaxHitPoints;
+    [HideInInspector]
+    public float m_shieldCurrentHitPoints; //debug
     float m_shieldRegenerationRate;
     float m_shieldRegenerationDelay;
 
@@ -84,5 +86,10 @@ public class UtilityShieldGenerator : BHUtility {
         }
 
         return damageInfo;
+    }
+
+    public float GetCurrentHitPoints()
+    {
+        return m_shieldCurrentHitPoints;
     }
 }

@@ -9,14 +9,31 @@ public enum CONTROLTYPE
     NONE
 }
 
+public enum BEHAVIOUROVERRIDE //independant of AI or direct controls
+{
+    NONE,
+    WAYPOINT, //a single or possibly multiple set of waypoints for the ship to steer to
+    FORMATION //this ship currently belongs to a formation
+}
+
+public enum AIBEHAVIOURSTATE
+{
+    NONE,
+    ENGAGE_BROADSIDE, //the AI is currently moving to engage with their broadside
+    ENGAGE_SPINE, //the AI is currently moving to engage with their spinal weapon
+    NOT_ENGAGING //the AI may fire freely with their turrets, but won't move to engage with turrets
+}
+
 public class ShipController : MonoBehaviour {
 
     BaseShip m_baseShip;
     IFFGROUP m_team;
+    //FleetController m_fleetController; //new
     //AIController m_ai;
     public CONTROLTYPE m_currentControlMethod;
+    public BEHAVIOUROVERRIDE m_currentOverrideBehaviour = BEHAVIOUROVERRIDE.NONE;
 
-    Vector3 m_waypoint;
+    Vector3 m_waypoint; //used for all movement functions
 
     //AIinfo
 
@@ -27,12 +44,13 @@ public class ShipController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        m_currentControlMethod = CONTROLTYPE.DIRECT;
+        m_currentControlMethod = CONTROLTYPE.AI;
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	    
+	void Update () 
+    {
+
         switch(m_currentControlMethod)
         {
             case CONTROLTYPE.DIRECT:
@@ -92,6 +110,12 @@ public class ShipController : MonoBehaviour {
     void UpdateAIControl()
     {
         //run AI's control
+        //get decision from AI component
+    }
+
+    void OnMouseDown()
+    {
+        ObjectManager.Instance.GetFleetController(m_team).RequestDirectControl();
     }
 
     public void ChangeThrottleYaw(float a_yaw)

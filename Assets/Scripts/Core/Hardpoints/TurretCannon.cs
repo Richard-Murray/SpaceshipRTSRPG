@@ -56,9 +56,9 @@ public class TurretCannon : BHTurret
         m_activated = false;
 
         //debug
-        m_objectToTarget = GameObject.Find("DebugTarget");
-        m_locationTarget = m_objectToTarget.transform.position;
-        m_headingTarget = m_objectToTarget.transform.position;
+        //m_objectToTarget = GameObject.Find("DebugTarget");
+        //m_locationTarget = m_objectToTarget.transform.position;
+        //m_headingTarget = m_objectToTarget.transform.position;
     }
 
     // Update is called once per frame

@@ -41,7 +41,9 @@ public class ObjectFactory : MonoBehaviour {
         ShipBuild tempBuild = new ShipBuild(hull, hardpoints, controlGroups, cost);
 
         CreateShip(tempBuild, IFFGROUP.TEAM1, new Vector3(-5, 0, 0));
+        CreateShip(tempBuild, IFFGROUP.TEAM1, new Vector3(-5, 7, 0));
         CreateShip(tempBuild, IFFGROUP.TEAM2, new Vector3(5, 0, 0));
+        CreateShip(tempBuild, IFFGROUP.TEAM2, new Vector3(5, -7, 0));
 	}
 	
 	// Update is called once per frame
@@ -49,28 +51,28 @@ public class ObjectFactory : MonoBehaviour {
     {
         //Debug.Log(m_numOfShipsDebug);
 
-        //if(Input.GetKey(KeyCode.Space))
-        //{
-        //    string hull = "basicShip";
-        //    List<string> hardpoints = new List<string>();
-        //    hardpoints.Add("basicEngine");
-        //    hardpoints.Add("basicShield");
-        //    hardpoints.Add("basicTurretCannon");
-        //    hardpoints.Add("basicTurretCannon");
-        //    hardpoints.Add("basicTurretCannon2");
-        //    List<int> controlGroups = new List<int>();
-        //    controlGroups.Add(0);
-        //    controlGroups.Add(0);
-        //    controlGroups.Add(0);
-        //    controlGroups.Add(0);
-        //    controlGroups.Add(0);
-        //    float cost = 100.0f;
-        //    ShipBuild tempBuild = new ShipBuild(hull, hardpoints, controlGroups, cost);
+        if(Input.GetKey(KeyCode.Space))
+        {
+            string hull = "basicShip";
+            List<string> hardpoints = new List<string>();
+            hardpoints.Add("basicEngine");
+            hardpoints.Add("basicShield");
+            hardpoints.Add("basicTurretCannon");
+            hardpoints.Add("basicTurretCannon");
+            hardpoints.Add("basicTurretCannon2");
+            List<int> controlGroups = new List<int>();
+            controlGroups.Add(0);
+            controlGroups.Add(0);
+            controlGroups.Add(0);
+            controlGroups.Add(0);
+            controlGroups.Add(0);
+            float cost = 100.0f;
+            ShipBuild tempBuild = new ShipBuild(hull, hardpoints, controlGroups, cost);
 
-        //    CreateShip(tempBuild, IFFGROUP.TEAM1, new Vector3(Random.value * 100, 0, 0));
+            CreateShip(tempBuild, IFFGROUP.TEAM1, new Vector3(Random.value * 100, 0, 0));
 
-        //    m_numOfShipsDebug++;
-        //}
+            m_numOfShipsDebug++;
+        }
     }
 
     void CreateShip(ShipBuild a_build, IFFGROUP a_team, Vector3 a_position)

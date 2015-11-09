@@ -62,6 +62,7 @@ public class ObjectManager : MonoBehaviour {
             GameObject fleetControllerObject = Instantiate(m_baseFleetController);
             m_fleetControllerList.Add(fleetControllerObject.GetComponent<FleetController>());
             fleetControllerObject.name = "FleetController" + (i + 1);
+            m_fleetControllerList[i].SetTeam(i);
         }
     }
 
@@ -102,5 +103,10 @@ public class ObjectManager : MonoBehaviour {
             return null;
         }
 
+    }
+
+    public FleetController GetFleetController(IFFGROUP a_team)
+    {
+        return m_fleetControllerList[(int)a_team];
     }
 }

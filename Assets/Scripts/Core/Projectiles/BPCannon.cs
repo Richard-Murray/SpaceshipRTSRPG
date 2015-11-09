@@ -30,7 +30,8 @@ public class BPCannon : BaseProjectile {
         //Debug.Log("Collision");
         //Debug.Log(collision.gameObject);
         BaseShip ship = collider.GetComponent<BaseShip>();
-        if (ship.gameObject != m_originObject)
+        //if (ship.gameObject != m_originObject)
+        if(ship.GetIFF() != m_team)
         {
             if (ship != null)
             {

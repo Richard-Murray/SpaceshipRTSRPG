@@ -86,10 +86,6 @@ public class BaseShip : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        //Debug.Log(m_currentHitPoints);
-        //Debug.Log(m_currentPower);
-        Debug.Log(GetIFF());
-
         for (int i = 0; i < m_hardpointList.Count; ++i)
         {
             if (m_hardpointList[i].m_hardpoint != null)
@@ -97,10 +93,6 @@ public class BaseShip : MonoBehaviour {
                 m_hardpointList[i].m_hardpoint.ShipUpdate();
             }
         }
-        //if(Input.GetKeyDown(KeyCode.A))
-        //{
-        //    ApplyDamage(new DamageInformation(100, 0, 0, 0, IFFGROUP.TEAM1));
-        //}
                 
         ApplyMovement();
 
@@ -138,6 +130,19 @@ public class BaseShip : MonoBehaviour {
         m_currentHitPoints = m_maxHitPoints;
         m_currentPower = m_baseMaxPower;
     }    
+
+    void OnGUI()
+    {
+        var point = Camera.main.WorldToScreenPoint(new Vector2(transform.position.x, transform.position.y));
+        point.y = Mathf.Abs(point.y - Screen.height);
+        var temp = new Rect(point, new Vector2(100, 50));
+        var temp2 = new Rect(point - new Vector3(0, -10, 0), new Vector2(100, 50));
+        var temp3 = new Rect(point - new Vector3(0, -20, 0), new Vector2(100, 50));
+        GUI.Label(temp, Mathf.Round(m_currentHitPoints).ToString() + "/" + m_maxHitPoints);
+        GUI.Label(temp2, Mathf.Round(m_activeShield.m_shieldCurrentHitPoints).ToString() + "/" + m_activeShield.m_shieldMaxHitPoints);
+        GUI.Label(temp3, Mathf.Round(m_currentPower).ToString() + "/" + m_maxPower);
+
+    }
 
     void LinkAndUpdateHardpoints()
     {
