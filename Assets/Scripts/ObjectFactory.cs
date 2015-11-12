@@ -78,6 +78,7 @@ public class ObjectFactory : MonoBehaviour {
     void CreateShip(ShipBuild a_build, IFFGROUP a_team, Vector3 a_position)
     {
         GameObject ship = Instantiate(DataManager.Instance.GetPrefab(a_build.m_hull));
+        ship.transform.SetParent(this.transform);
         BaseShip shipScript = ship.GetComponent<BaseShip>();
         shipScript.Initialise(a_build.m_hardpoints);
         ship.transform.position = a_position;

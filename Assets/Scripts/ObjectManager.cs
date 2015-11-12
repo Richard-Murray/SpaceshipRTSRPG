@@ -60,6 +60,7 @@ public class ObjectManager : MonoBehaviour {
         for(int i = 0; i < a_numOfTeams; i++)
         {
             GameObject fleetControllerObject = Instantiate(m_baseFleetController);
+            fleetControllerObject.transform.SetParent(this.transform);
             m_fleetControllerList.Add(fleetControllerObject.GetComponent<FleetController>());
             fleetControllerObject.name = "FleetController" + (i + 1);
             m_fleetControllerList[i].SetTeam(i);

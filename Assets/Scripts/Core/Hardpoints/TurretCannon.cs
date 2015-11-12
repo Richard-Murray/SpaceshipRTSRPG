@@ -73,9 +73,10 @@ public class TurretCannon : BHTurret
 
         //test range of target
         //if not given a control group target
+        //or if control group target is dead
+        //or if there is no control group target, but the enemy is not in range
+        //if any of those are true, or prioritisation is different, search for a target
         m_objectToTarget = ObjectManager.Instance.GetTargetWithinRange(transform.position, m_parent.GetIFF(), m_maxRange); //IMPORTANT
-        //or if control group target still alive
-        //test for that
 
         if (m_objectToTarget != null)
         {
@@ -138,6 +139,7 @@ public class TurretCannon : BHTurret
     {
         DamageInformation damageInfo = new DamageInformation(m_armourDamageMagnitude, m_energyDamageMagnitude, m_armourPierceModifier, m_energyPierceModifier, m_parent.GetIFF());
         GameObject projectile = Instantiate(m_projectile);
+        projectile.transform.SetParent(ObjectManager.Instance.transform);
         BPCannon projectileScript = projectile.GetComponent<BPCannon>();
 
         projectileScript.Initialise(damageInfo, m_parent.GetIFF(), m_parent.gameObject, m_projectileSpeed, transform.up);

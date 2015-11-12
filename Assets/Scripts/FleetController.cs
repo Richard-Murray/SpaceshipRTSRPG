@@ -10,10 +10,13 @@ public class FleetController : MonoBehaviour {
     List<ShipController> m_shipList;
     List<ShipFormation> m_formationList;
 
+    ShipController m_currentControlledShip;
+
     void Awake()
     {
         m_shipList = new List<ShipController>();
         m_formationList = new List<ShipFormation>();
+        m_currentControlledShip = null;
     }
 
 	// Use this for initialization
@@ -45,11 +48,31 @@ public class FleetController : MonoBehaviour {
         {
             //var ray = new Ray()
         }
+
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            if(Time.timeScale == 1)
+            {
+                Time.timeScale = 0;
+            }
+            else
+            {
+                Time.timeScale = 1;
+            }
+        }
     }
 
-    public void RequestDirectControl()
+    public void RequestDirectControl(ShipController a_controller)
     {
-
+        if (m_player)
+        {
+            if (m_currentControlledShip)
+            {
+                m_currentControlledShip.SetControlType(CONTROLTYPE.AI);
+            }
+            m_currentControlledShip = a_controller;
+            a_controller.SetControlType(CONTROLTYPE.DIRECT);
+        }
     }
 }
 

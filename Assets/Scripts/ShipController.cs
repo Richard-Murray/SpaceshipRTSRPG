@@ -109,13 +109,21 @@ public class ShipController : MonoBehaviour {
 
     void UpdateAIControl()
     {
+        m_baseShip.SetThrottleSpeed(0);
+        m_baseShip.SetThrottleYaw(0);
+        m_baseShip.SetBoostOff();
         //run AI's control
         //get decision from AI component
     }
 
     void OnMouseDown()
     {
-        ObjectManager.Instance.GetFleetController(m_team).RequestDirectControl();
+        ObjectManager.Instance.GetFleetController(m_team).RequestDirectControl(this);
+    }
+
+    public void SetControlType(CONTROLTYPE a_controlType)
+    {
+        m_currentControlMethod = a_controlType;
     }
 
     public void ChangeThrottleYaw(float a_yaw)

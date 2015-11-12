@@ -68,6 +68,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\BaseState.cs" />
     <Compile Include="Assets\Scripts\Core\Hardpoints\BHBroad.cs" />
     <Compile Include="Assets\Scripts\Core\Hardpoints\BHEngine.cs" />
     <Compile Include="Assets\Scripts\Core\Hardpoints\BHSpine.cs" />
@@ -86,6 +87,7 @@
     <Compile Include="Assets\Scripts\ObjectFactory.cs" />
     <Compile Include="Assets\Scripts\ObjectManager.cs" />
     <Compile Include="Assets\Scripts\ShipController.cs" />
+    <Compile Include="Assets\StateManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>
